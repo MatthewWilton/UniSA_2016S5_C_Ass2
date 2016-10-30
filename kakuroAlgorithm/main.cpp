@@ -8,6 +8,7 @@ const int bSize = 10;
 string board [bSize][bSize];
 
 int main() {
+    cout<<"hello\n"<<endl;
     //used throughout as the random number
     int num;
     //helps make the seed for random numbers more random
