@@ -3,7 +3,7 @@
 using namespace std;
 
 //board size, set number for a different board size
-const int bSize = 30;
+const int bSize = 8;
 //the actual board
 string board [bSize][bSize];
 
@@ -55,7 +55,12 @@ int main() {
             else{
                 //cell is the uppermost left cell
                 if(w==1 && h==1){
-                    num = rand()%2;
+                    if(bSize == 4){
+                        num = 1;
+                    }
+                    else{
+                        num = rand()%2;
+                    }
                 }
                 //cell is on the top line
                 else if(h==1){
@@ -95,43 +100,48 @@ int main() {
         }
     }
 
-
-    /*for(int h=1; h<bSize; h++){
-        //height and width symmetry
-        int hs,ws;
-        for(int w=1; w<(bSize/2)+1; w++){
-            //boards smaller than 4x4
-            if(bSize < 5){
-                num = 1;
-            }
-            else{
-                //board is 5x5 and sets middle 4 cells to O's
-                if(bSize==5 && (w==2&&h==2||w==2&&h==3)){
+    //puzzle is even
+    if(bSize%2 == 0){
+        int hs, ws;
+        for(int h=(bSize/2); h<(bSize/2)+1; h++) {
+            for (int w = 1; w < (bSize/2)+1; w++) {
+                if(board[h-1][w]=="X" && board[h+1][w]=="X"){
+                    num = 0;
+                }
+                else if(board[h-1][w]=="O" && board[h-2][w]=="X" ||
+                        board[h+1][w]=="O" && board[h+2][w]=="X"){
                     num = 1;
                 }
                 else{
-                    num = rand()%4;
+                    if(w != 1){
+                        if(board[h][w-1]=="O" && board[h][w-2]=="X"){
+                            num = 1;
+                        }
+                    }
+                    else{
+                        num = rand()%3;
+                    }
+                }
+
+                if(num == 0){
+                    hs = abs(h-bSize);
+                    ws = abs(w-bSize);
+                    board[h][w] = "X";
+                    board[hs][ws] = "X";
+                }
+                else{
+                    hs = abs(h-bSize);
+                    ws = abs(w-bSize);
+                    board[h][w] = "O";
+                    board[hs][ws] = "O";
                 }
             }
-            //mirrored symmetry calculated to be:
-            //the positive of the height take the board size and width take the board size
-            //abs() turns negative integer into a positive one
-            hs = abs(h-bSize);
-            ws = abs(w-bSize);
-            if(num == 0){
-                board[h][w] = "X";
-                board[hs][ws] = "X";
-            }
-            else{
-                board[h][w] = "O";
-                board[hs][ws] = "O";
-            }
         }
-    }*/
+    }
 
     //assign numbers while also checking
     //if they are already in a line
-    /*for(int h=0; h<bSize; h++){
+    for(int h=0; h<bSize; h++){
         for(int w=0; w<bSize; w++){
             if(board[h][w] == "O"){
                 //find a number to assign
@@ -167,12 +177,66 @@ int main() {
                 board[h][w] = to_string(num);
             }
         }
-    }*/
+    }
+
+    for(int h=0; h<bSize; h++) {
+        for (int w = 0; w<bSize; w++) {
+            if(h!=bSize-1){
+                if(board[h+1][w]!="X" && board[h][w]=="X"){
+                    int downValue  = 0;
+                    int hPos = h+1;
+                    int wPos = w;
+                    bool loop = true;
+                    while(loop){
+                        downValue = downValue + atoi(board[hPos][wPos].c_str());
+                        cout << "h:"<<hPos<<" w:"<<wPos<<" value:"<<board[hPos][wPos]<<" down:"<<downValue<<endl;
+                        if(hPos==bSize-1){
+                            loop = false;
+                        }
+                        else if(board[hPos+1][wPos]=="X"){
+                            loop = false;
+                        }
+                        else{
+                            hPos += 1;
+                        }
+                    }
+                    if(downValue<10){
+                        board[h][w] = "0" + to_string(downValue);
+                    }
+                    else{
+                        board[h][w] = to_string(downValue);
+                    }
+                }
+            }
+        }
+    }
 
     //print the X's and numbers
     for(int h=0; h<bSize; h++){
+        for (int count = 0; count < bSize; count++)
+        {
+            //repeating this 5 times
+            cout << "       ";
+            if(count==bSize-1){
+                cout << "\n";
+            }
+        }
+        for (int count = 0; count < bSize; count++)
+        {
+            //repeating this 5 times
+            cout << "       ";
+            if(count==bSize-1){
+                cout << "\n";
+            }
+        }
         for (int w = 0; w < bSize; w++) {
-            cout << board[h][w] << " ";
+            if(board[h][w].length()==1){
+                cout << "  "<< board[h][w] << "  ";
+            }
+            else{
+                cout << board[h][w] << "/  " ;
+            }
+            cout << " ";
             if (w == bSize - 1) {
                 cout << "\n";
             }
