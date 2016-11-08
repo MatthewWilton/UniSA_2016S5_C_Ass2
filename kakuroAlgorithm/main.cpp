@@ -3,7 +3,7 @@
 using namespace std;
 
 //board size, set number for a different board size
-const int bSize = 4;
+const int bSize = 10;
 //the actual board
 string board [bSize][bSize];
 
@@ -94,6 +94,9 @@ int main() {
         for (int w = 1; w < bSize; w++) {
             //the cell is on the far right
             if(w == bSize-1){
+                if(bSize==4){
+                    num = 0;
+                }
                 //if the cell to the left is X then current cell must be X
                 if(board[h][w-1]=="X"){
                     num = 0;
@@ -124,12 +127,7 @@ int main() {
                         num = 1;
                     }
                     else{
-                        if(hLength[h]>=4 || wLength>=4){
-                            num = 0;
-                        }
-                        else{
-                            num = rand()%2;
-                        }
+                        num = rand()%2;
                     }
                 }
                 //cell is on the top line
@@ -247,7 +245,10 @@ int main() {
             int hs, ws;
             wLength = 0;
             for (int w = 1; w < (bSize / 2)+1; w++) {
-                if(board[h-1][w]=="O" && board[h-2][w]=="X"){
+                if(bSize==3){
+                    num = 1;
+                }
+                else if(board[h-1][w]=="O" && board[h-2][w]=="X"){
                     num = 1;
                 }
                 else{
@@ -289,8 +290,11 @@ int main() {
                 }
             }
             for (int w = (bSize/2)+1; w < bSize; w++) {
+                if(bSize==3){
+                    num = 1;
+                }
                 //up and down is X
-                if(board[h-1][w]=="X" && board[h+1][w]=="X"){
+                else if(board[h-1][w]=="X" && board[h+1][w]=="X"){
                     num = 0;
                 }
                     //down/up by 1 is O and down/up by 2 is X
@@ -350,15 +354,14 @@ int main() {
                 if(board[h+1][w]!="X" && board[h][w]=="X"){
                     int downValue  = 0;
                     int hPos = h+1;
-                    int wPos = w;
                     bool loop = true;
                     while(loop){
-                        downValue = downValue + atoi(board[hPos][wPos].c_str());
+                        downValue = downValue + atoi(board[hPos][w].c_str());
 
                         if(hPos==bSize-1){
                             loop = false;
                         }
-                        else if(board[hPos+1][wPos]=="X"){
+                        else if(board[hPos+1][w]=="X"){
                             loop = false;
                         }
                         else{
@@ -376,7 +379,7 @@ int main() {
         }
     }
     /*
-    //uniquness checker WIP
+    //Uniquness checking WIP
     for(int h=0; h<bSize; h++) {
         for (int w = 0; w < bSize; w++) {
             if(board[h][w].length()==2){
@@ -403,7 +406,48 @@ int main() {
     }
     */
 
+    for(int h=0; h<bSize; h++) {
+        for (int w = 0; w<bSize; w++) {
+            if(w!=bSize-1){
+                if((board[h][w+1]!="X" && board[h][w+1].length()==1) && (board[h][w]=="X" || board[h][w].length()>1)){
+                    int rightValue  = 0;
+                    int wPos = w+1;
+                    bool loop = true;
+                    while(loop){
+                        rightValue = rightValue + atoi(board[h][wPos].c_str());
 
+                        if(wPos==bSize-1){
+                            loop = false;
+                        }
+                        else if(board[h][wPos+1]=="X" || board[h][wPos+1].length()>1){
+                            loop = false;
+                        }
+                        else{
+                            wPos += 1;
+                        }
+                    }
+                    if(rightValue<10){
+                        if(board[h][w]=="X"){
+                            board[h][w] = "000" + to_string(rightValue);
+                        }
+                        else{
+                            board[h][w] = "0" + to_string(rightValue);
+                        }
+                    }
+                    else{
+                        if(board[h][w]=="X"){
+                            board[h][w] = "00" + to_string(rightValue);
+                        }
+                        else{
+                            board[h][w] += to_string(rightValue);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*
     //print the X's and numbers
     for(int h=0; h<bSize; h++){
         for (int count = 0; count < bSize; count++)
@@ -422,17 +466,27 @@ int main() {
                 cout << "\n";
             }
         }
+
         for (int w = 0; w < bSize; w++) {
+
             if(board[h][w].length()==1){
-                cout << "  "<< board[h][w] << "  ";
+                cout << "   "<< board[h][w] << "   ";
             }
             else{
-                cout << board[h][w] << "/  " ;
+                if(board[h][w].substr(2,2)=="00"){
+                    cout << "   "<<board[h][w].substr(0,2) << "/    " ;
+                }
+                else if(board[h][w].substr(0,2)=="00"){
+                    cout << "   /" << board[h][w].substr(2,2)<<" ";
+                }
+                else{
+                    cout << " " << board[h][w].substr(0,2) << "/" << board[h][w].substr(2,2) << " ";
+                }
             }
-            cout << " ";
             if (w == bSize - 1) {
                 cout << "\n";
             }
         }
     }
+    */
 }
